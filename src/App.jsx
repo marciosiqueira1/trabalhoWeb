@@ -4,6 +4,7 @@ import Card from './Card';
 import axios from 'axios';
 import endPoints from './endpoints.json';
 
+
 function App() {
 
   const apiNome = "https://restcountries.com/v3.1/name";
@@ -19,7 +20,7 @@ function App() {
 
       const endPoint = await axios.get(`${apiNome}/${input}`); //restcountries.com/v3.1/name/germany
 
-      const dadosPais = endPoint.data[0]; 
+      const dadosPais = endPoint.data[0];
 
       const pais = {
         nome: dadosPais.name.common,  // Germany
@@ -27,7 +28,7 @@ function App() {
         capital: dadosPais.capital, //   Berlin
         continente: dadosPais.region,
         regiao: dadosPais.subregion,
-        lingua: dadosPais.lang
+        currency: dadosPais.capital
       }
 
       setListaPaises(prevLista => [pais, ...prevLista]); 
@@ -35,7 +36,6 @@ function App() {
     
     catch(error){
         console.log ('Deu erro!');
-
       }
     }
 
@@ -65,11 +65,11 @@ function App() {
               capital={cardData.capital}
               continente={cardData.continente}
               regiao={cardData.regiao}
-              lingua={cardData.lingua}
+              currency={cardData.currency}
             />
             ))
         ) : (
-          <p>Use a busca acima para adicionar países.</p>
+          <p></p>
         )}
       </div>
     </>

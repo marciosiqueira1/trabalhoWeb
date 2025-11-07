@@ -1,6 +1,6 @@
 import React from 'react'
 
-function Card({key, nome, img, capital, continente, regiao, lingua}) {
+function Card({key, nome, img, capital, continente, regiao, currency}) {
   return (
     <div id='card'>
         <img src={img} id='flag-img'/>
@@ -22,9 +22,12 @@ function Card({key, nome, img, capital, continente, regiao, lingua}) {
         <hr />
         <div id='div1'>
           <span>Lingua:</span>
-          <span><strong>{lingua}</strong></span>
+          <span><strong>{currency}</strong></span>
         </div>
-
+        <div id='btn-card'>
+          <button id='edit-btn'><img src="src\images\edit.png" alt="" id='icon-edit-png'/>Editar</button>
+          <button id='del-btn'><img src="src\images\icondel.png" alt="" id='icon-del-png'/>Deletar</button>
+        </div>
     </div>
   )
 }
