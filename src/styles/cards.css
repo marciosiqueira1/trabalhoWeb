@@ -2,7 +2,8 @@
 /* Form de Busca */
 #pesquisa-h2 {
   display: flex;
-  justify-content: start;
+  justify-content: center;
+  align-items: center;
   color: white;
   margin: 30px 0px 20px 30px;
 }
@@ -10,8 +11,9 @@
 form{
   display: flex;
   flex-direction: row;
-  margin: 10px 0px 30px 30px;
   width: 100%;
+  justify-content:space-around;
+  gap: 50%;
 }
 input{
   color: rgb(50, 50, 50);
@@ -24,8 +26,7 @@ input{
   background-color: white;
   cursor: pointer;
   text-align: center;
-  border-top-left-radius: 5px;
-  border-bottom-left-radius: 5px ;
+
 }
 
 button {
@@ -38,6 +39,7 @@ button {
     border: none;
     color: white; 
 }
+
 #btn-busca{
     width: 100px;
     background-color: #1900ff;
@@ -46,12 +48,22 @@ button {
     border-top-left-radius: 0px;
     border-bottom-left-radius: 0px ;
 }
-#btn-busca:hover {
+#btn-busca:hover{
     background-color: rgb(0, 0, 255);
 }
 #btn-busca:active{  
       transform: translateX(-2px);
 }
+#btn-busca-random{
+    width: 50px;
+    height: 40px;
+    background-color: #1900ff;
+    border-top-right-radius: 0px;
+    border-bottom-right-radius: 0px;
+    border-top-left-radius: 5px;
+    border-bottom-left-radius: 5px ;
+  }
+
 
 /* Cards das Bandeiras */
 
