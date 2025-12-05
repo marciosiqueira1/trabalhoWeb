@@ -63,6 +63,13 @@ button {
     border-top-left-radius: 5px;
     border-bottom-left-radius: 5px ;
   }
+#btn-busca-random:hover{
+    background-color: rgb(0, 0, 255);
+}
+#btn-busca-random:active{  
+      transform: translateX(2px);
+}
+
 
 
 /* Cards das Bandeiras */

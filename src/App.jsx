@@ -1,97 +1,71 @@
-import { use, useEffect, useState } from 'react';
-import Card from './Card';
-import axios from 'axios';
+import { useEffect, useState } from 'react';
 import './styles/header.css';
 import './styles/cards.css';
+import Card from './Card';
+import axios from 'axios';
 import endPoints from './endpoints.json';
 
 function App() {
-  const apiNome = "https://restcountries.com/v3.1/name";
+
+  const apiNome = "https://restcountries.com/v3.1";
 
   const [listaPaises, setListaPaises] = useState([]);
   const [valorInput, setValorInput] = useState('');
 
+  const listaCodigos = endPoints.codigos;
+
+  // --- FUNÇÃO 1: BUSCA POR NOME E ADICIONA O CARD (ACESSADA APENAS PELO SUBMIT) ---
   const buscaNome = async (valorInput) => {
-    try{
+    const input = valorInput.trim();
 
-      const input = valorInput.trim();
 
-      const endPoint = await axios.get(`${apiNome}/${input}`); //restcountries.com/v3.1/name/germany
+    try {
 
+      const urlRestrita = `${apiNome}/name/${input}?fullText=true`; // Restringe a pesquisa apenas aos endpoints presentes na API
+      const endPoint = await axios.get (urlRestrita);
       const dadosPais = endPoint.data[0];
 
       const pais = {
-        nome: dadosPais.name.common,  // Germany
-        img: dadosPais.flags.png,    //  Flag
-        // capital: dadosPais.capital, //   Berlin
-        // continente: dadosPais.region,
-        // regiao: dadosPais.subregion,
-        // currency: dadosPais.capital
-      }
+        id: dadosPais.cca3,
+        nome: dadosPais.name.common,
+        img: dadosPais.flags.png,
+        capital: dadosPais.capital ? dadosPais.capital[0] : 'N/A',
+        continente: dadosPais.region,
+        regiao: dadosPais.subregion,
+        currency: dadosPais.capital
+      };
 
-      setListaPaises(prevLista => [pais, ...prevLista]); 
+      setListaPaises(prevLista => [pais, ...prevLista]);
+      setValorInput('');
+
+    } catch (error) {
+      alert(`País '${input}' não encontrado!`);
     }
-    
-    catch(error){
-        console.log ('Deu erro!');
-      }
-    }
+  }
 
-    const handleSubmit = (e) => {
-      e.preventDefault();
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    buscaNome(valorInput);
+  }
 
-      buscaNome(valorInput);
-    }
+  // --- FUNÇÃO 2: PREENCHE O INPUT COM UM NOME ALEATÓRIO ---
+  const preencheInputAleatorio = async () => {
+    // 1. Geração Aleatória do Código
+    const random = Math.floor(Math.random() * listaCodigos.length);
+    const codigoEscolhido = listaCodigos[random];
 
-  //Busca Random
+      // 2. Busca os dados para obter o NOME (usando API_ALPHA, mais rápido para códigos)
+      const dados = await axios.get(`${apiNome}/alpha/${codigoEscolhido}`);
+      const nomeCompleto = dados.data[0].name.common;
 
-  const apiNomeRandom = "https://restcountries.com/v3.1/name";
-
-  const listaCodigos = endPoints.codigos;
-
-  // const buscaPais = async () => {
-  //   const random = Math.floor(Math.random() * listaCodigos.length); 
-  //   const valorEscolhido = listaCodigos[random]; 
-  //   try {
-  //     const dados = await axios.get(`${apiNomeRandom}/${valorEscolhido}`);
-  //     const dadosPais = dados.data[0];
-  //     const pais = {
-  //       nome: dadosPais.name.common,
-  //       img: dadosPais.flags.png,
-  //       // capital: dadosPais.capital,
-  //     };
-
-  //     setListaPaises(prevLista => [pais, ...prevLista]); 
-
-  //   } catch (error) {
-  //       console.error(`Erro ao buscar país ${valorEscolhido}:`, error);
-  //   }
-  // }
-
-  const buscaPais = async () => {
-        // 1. Sorteia um código (Ex: 'BRA')
-        const random = Math.floor(Math.random() * listaCodigos.length); 
-        const codigoEscolhido = listaCodigos[random]; 
-
-        try {
-            // 2. Busca os dados do país usando o endpoint Alpha (mais rápido)
-            const dados = await axios.get(`${apiAlpha}/${codigoEscolhido}`);
-            const nomeCompleto = dados.data[0].name.common;
-            
-            // 3. ATUALIZA O ESTADO DO INPUT COM O NOME COMPLETO
-            setValorInput(nomeCompleto); 
-
-        } catch (error) {
-            console.error(`Erro ao buscar nome para preenchimento:`, error);
-        }
-    };
-
+      // 3. ATUALIZA O ESTADO DO INPUT (CORREÇÃO CHAVE)
+      setValorInput(nomeCompleto);
+  }
 
   useEffect(() => {
-    buscaPais();
   }, []);
 
-return (
+  return (
     <>
       <header>
         <h1>
@@ -103,30 +77,29 @@ return (
             <button id='btn-sobre'>Sobre</button>
           </div>
             <button id='btn-logout'>LogOut</button>
-        </nav>
+        </nav> 
       </header>
       <main>
-        <h2 id='pesquisa-h2'>Pesquise um país aleatório...</h2>
+        <h2 id='pesquisa-h2'>Pesquise um país ou use o botão '?' para uma sugestão!</h2>
         <form onSubmit={handleSubmit}>
           <div id='div-input-btn'>
-            <button onClick={buscaPais} id='btn-busca-random'>?</button> 
-            <input type="text" 
+            <button type='button' onClick={preencheInputAleatorio} id='btn-busca-random'>?</button>
+            <input type="text"
               placeholder='nome do país em inglês'
               value={valorInput}
-              onChange={(e) => setValorInput(e.target.value)}  
+              onChange={(e) => setValorInput(e.target.value)}
             />
             <button type='submit' id='btn-busca'>Buscar</button>
           </div>
-         </form>
-        
-        
+        </form>
+
         <div id='div-card'>
           {listaPaises.length > 0 ? (
             listaPaises.map((cardData) => (
-              <Card 
+              <Card
                 key={cardData.id}
                 nome={cardData.nome}
-                img={cardData.img} 
+                img={cardData.img}
                 capital={cardData.capital}
                 continente={cardData.continente}
                 regiao={cardData.regiao}
@@ -134,7 +107,7 @@ return (
               />
             ))
           ) : (
-            <p></p>
+            <p>Use a busca acima para adicionar países.</p>
           )}
         </div>
       </main>
