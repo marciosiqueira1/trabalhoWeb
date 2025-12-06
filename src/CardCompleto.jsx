@@ -1,10 +1,10 @@
 import React from 'react'
 
-function Card({key, nome, img, capital, continente, regiao, mapaUrl}) {
+function Card({key, nome, img, capital, continente, regiao, currency}) {
   return (
-    <div id='card-completo'>
-        <img src={img} id='flag-img' alt="Bandeira do país"/>
-        <h2 id='nome-pais'>{nome}</h2>
+    <div id='card'>
+        <img src={img} id='flag-img'/>
+        <h2>{nome}</h2>
         <div id='div1'>
           <span>Capital:</span>
           <span><strong>{capital}</strong></span>
@@ -20,13 +20,10 @@ function Card({key, nome, img, capital, continente, regiao, mapaUrl}) {
           <span><strong>{regiao}</strong></span>
         </div>
         <hr />
-        <div id='div-mapa'>
-          <div>
-            <img src={mapaUrl} alt="Localização do pais" />
-          </div>
+        <div id='div1'>
+          <span>Lingua:</span>
+          <span><strong>{currency}</strong></span>
         </div>
-
-
         <div id='btn-card'>
           <button id='edit-btn'><img src="public\images\edit.png" alt="" id='icon-edit-png'/>Editar</button>
           <button id='del-btn'><img src="public\images\icondel.png" alt="" id='icon-del-png'/>Deletar</button>
@@ -38,17 +35,3 @@ function Card({key, nome, img, capital, continente, regiao, mapaUrl}) {
 export default Card
 
 
-// Card Simples
-
-// import React from 'react'
-
-// function Card({key, nome, img}) {
-//   return (
-//     <div id='card'>
-//         <img src={img} id='flag-img'/>
-//         <h2><a href="">{nome}</a></h2>
-//     </div>
-//   )
-// }
-
-// export default Card
