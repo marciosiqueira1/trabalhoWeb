@@ -1,35 +1,27 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import './styles/header.css';
 import './styles/cards.css';
-import Login from './Login';
 import Card from './Card';
+import CardCompleto from './CardCompleto';
 import axios from 'axios';
 import endPoints from './endpoints.json';
 
 function App() {
-  const [logado, setLogado] = useState(false)  // ok
-
-  useEffect(() => {
-  }, [])
-
   const apiNome = "https://restcountries.com/v3.1";
-  const tokenApi = "sk.eyJ1IjoibWFyY2lvc2xyIiwiYSI6ImNtaXVsamdtODB2dm4zZG9tcTJqanJ0YzQifQ.aCIQ-PZRXgRqmchp7SlbTQ";
+  const tokenApi = "pk.eyJ1IjoibWFyY2lvc2xyIiwiYSI6ImNtaXhpNWh3bTA0Y2wzZnB2YnhxbnF3dm4ifQ.mbkuut1Ftwf8bLXQLtIaZA";
 
   const [listaPaises, setListaPaises] = useState([]);
   const [valorInput, setValorInput] = useState('');
-
+  const [paginaAtual, setPaginaAtual] = useState('inicio'); // 'inicio' | 'sobre' | 'detalhe'
+  const [paisSelecionado, setPaisSelecionado] = useState(null); // id (cca3) do país selecionado
   const listaCodigos = endPoints.codigos;
 
   const buscaNome = async (valorInput) => {
     const input = valorInput.trim();
-
     try {
-
-      const urlRestrita = `${apiNome}/name/${input}?fullText=true`; // Restringe a pesquisa apenas aos endpoints presentes na API
+      const urlRestrita = `${apiNome}/name/${input}?fullText=true`;
       const endPoint = await axios.get(urlRestrita);
       const dadosPais = endPoint.data[0];
-
-      // API do mapa precisa da Latitude e Longitude para mostrar a localização no mapa
 
       const lat = dadosPais.latlng[0];
       const lng = dadosPais.latlng[1];
@@ -53,7 +45,10 @@ function App() {
         zoom = '1.5,0';
       }
 
+      //const urlMapa = `https://api.mapbox.com/styles/v1/mapbox/outdoors-v11/static/${lng},${lat},${zoom}/400x400?access_token=${tokenApi}`;
+
       const urlMapa = `https://api.mapbox.com/styles/v1/mapbox/outdoors-v11/static/${lng},${lat},${zoom}/400x400?access_token=${tokenApi}`;
+
 
       const pais = {
         id: dadosPais.cca3,
@@ -62,25 +57,26 @@ function App() {
         capital: dadosPais.capital,
         continente: dadosPais.region,
         area: dadosPais.area,
-        url: urlMapa,
-        lang: Object.values(dadosPais.languages).join(', ') // Transforma em string e coloca a , 
+        mapaUrl: urlMapa,
+        lang: Object.values(dadosPais.languages).join(', ')
       };
 
       setListaPaises(prevLista => [pais, ...prevLista]);
       setValorInput('');
-
+      // quando adiciona novo país, navega opcionalmente para inicio (mantemos na lista)
+      setPaginaAtual('inicio');
+      setPaisSelecionado(null);
     } catch (error) {
       alert(`País '${input}' não encontrado!`);
     }
-  }
+  };
 
   const handleSubmit = (e) => {
     e.preventDefault();
     buscaNome(valorInput);
-  }
+  };
 
   const preencheInputAleatorio = async () => {
-
     const random = Math.floor(Math.random() * listaCodigos.length);
     const codigoEscolhido = listaCodigos[random];
 
@@ -88,70 +84,112 @@ function App() {
     const nomeCompleto = dados.data[0].name.common;
 
     setValorInput(nomeCompleto);
-  }
+  };
 
   const deleteCard = (id) => {
     setListaPaises(prev => prev.filter(p => p.id !== id));
+    // se o card aberto for deletado na tela de detalhe, volta para inicio
+    if (paisSelecionado === id) {
+      setPaisSelecionado(null);
+      setPaginaAtual('inicio');
+    }
   };
 
-  if (!logado) {
-    return <Login onLogin={() => setLogado(true)} />;
-  }
+  // chamada quando o usuário clica no Card simples:
+  const abrirDetalhe = (id) => {
+    setPaisSelecionado(id);
+    setPaginaAtual('detalhe');
+    // opcional: scroll to top para garantir que o detalhe comece no topo da tela
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  const dadosPaisSelecionado = listaPaises.find(p => p.id === paisSelecionado);
 
   return (
     <>
       <header>
         <h1>
-          <img src="public\images\logoFlagpedia.png" alt="" id='logo' />
+          <img src="public/images/logoFlagpedia.png" alt="logo" id='logo' />
         </h1>
         <nav>
           <div id='div-btn-2'>
-            <button id='btn-inicio' onClick={() => setPaginaAtual('inicio')}>Inicio</button>
+            <button id='btn-inicio' onClick={() => { setPaginaAtual('inicio'); setPaisSelecionado(null); }}>Inicio</button>
             <button id='btn-sobre' onClick={() => setPaginaAtual('sobre')}>Sobre</button>
           </div>
           <button id='btn-logout'>LogOut</button>
         </nav>
       </header>
-      <main>
-        <h2 id='pesquisa-h2'>Pesquise um país ou use o botão '?' para uma sugestão!</h2>
-        <form onSubmit={handleSubmit}>
-          <div id='div-input-btn'>
-            <button type='button' onClick={preencheInputAleatorio} id='btn-busca-random'>?</button>
-            <input type="text"
-              placeholder='nome do país em inglês'
-              value={valorInput}
-              onChange={(e) => setValorInput(e.target.value)}
-            />
-            <button type='submit' id='btn-busca'>Buscar</button>
-          </div>
-        </form>
 
-        <div id='div-card'>
-          {listaPaises.length > 0 ? (
-            listaPaises.map((cardData) => (
-              <Card
-                key={cardData.id}
-                id={cardData.id}
-                nome={cardData.nome}
-                img={cardData.img}
-                capital={cardData.capital}
-                continente={cardData.continente}
-                area={cardData.area}
-                mapaUrl={cardData.url}
-                lang={cardData.lang}
+      <main>
+        {paginaAtual === 'inicio' && (
+          <>
+            <h2 id='pesquisa-h2'>Pesquise um país ou use o botão '?' para uma sugestão!</h2>
+
+            <form onSubmit={handleSubmit}>
+              <div id='div-input-btn'>
+                <button type='button' onClick={preencheInputAleatorio} id='btn-busca-random'>?</button>
+                <input
+                  type="text"
+                  placeholder='nome do país em inglês'
+                  value={valorInput}
+                  onChange={(e) => setValorInput(e.target.value)}
+                />
+                <button type='submit' id='btn-busca'>Buscar</button>
+              </div>
+            </form>
+
+            {/* LISTA DE CARDS SIMPLES */}
+            <div id='div-card'>
+              {listaPaises.length > 0 ? (
+                listaPaises.map(p => (
+                  <Card
+                    key={p.id}
+                    id={p.id}
+                    nome={p.nome}
+                    img={p.img}
+                    onOpen={() => abrirDetalhe(p.id)}
+                  />
+                ))
+              ) : (
+                <p>Use a busca acima para adicionar países.</p>
+              )}
+            </div>
+          </>
+        )}
+
+        {paginaAtual === 'sobre' && (
+          <section style={{ padding: 20 }}>
+            <h2>Sobre</h2>
+            <p>Coloque aqui o texto sobre o seu projeto.</p>
+            <button onClick={() => setPaginaAtual('inicio')}>Voltar</button>
+          </section>
+        )}
+
+        {paginaAtual === 'detalhe' && dadosPaisSelecionado && (
+            <div id='container-card-completo'>
+              <CardCompleto
+                id={dadosPaisSelecionado.id}
+                nome={dadosPaisSelecionado.nome}
+                img={dadosPaisSelecionado.img}
+                capital={dadosPaisSelecionado.capital}
+                continente={dadosPaisSelecionado.continente}
+                area={dadosPaisSelecionado.area}
+                mapaUrl={dadosPaisSelecionado.mapaUrl}
+                lang={dadosPaisSelecionado.lang}
                 onDelete={deleteCard}
               />
-            ))
-          ) : (
-            <p>Use a busca acima para adicionar países.</p>
-          )}
-        </div>
+            </div>
+        )}
+
+        {paginaAtual === 'detalhe' && !dadosPaisSelecionado && (
+          <section style={{ padding: 20 }}>
+            <p>País não encontrado. Volte para a lista.</p>
+            <button onClick={() => setPaginaAtual('inicio')}>Voltar</button>
+          </section>
+        )}
       </main>
     </>
   );
 }
 
 export default App;
-
-
-// Teste para ver se deu bom

@@ -71,6 +71,13 @@ button {
 }
 
 /* Cards das Bandeiras */
+#card{
+  background-color: white;
+  margin-top: 20px;
+  border-radius: 10px;
+  padding: 15px;
+  width: 300px;
+}
 
 #div-card{
   display: flex;
@@ -91,7 +98,7 @@ a:hover{
 #flag-img{
   border-radius: 5px;
   border: 2px rgb(233, 233, 233) solid;
-  max-height: 300px;
+  height: 150px;
   margin-top: 20px;
 }
 
@@ -116,9 +123,14 @@ hr{
   border: 1px dashed lightgray
 }
 
+#container-card-completo{
+  display: flex;
+  justify-content: center;
+  margin-top: 30px;
+}
+
 #card-completo{
   display: flex;
-  flex-direction: row;
   justify-content: space-around;
   margin-top: 20px;
   border: 1px rgb(0, 188, 0) solid;
