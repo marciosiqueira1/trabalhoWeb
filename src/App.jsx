@@ -1,11 +1,16 @@
 import { useEffect, useState } from 'react';
 import './styles/header.css';
 import './styles/cards.css';
+import Login from './Login';
 import Card from './Card';
 import axios from 'axios';
 import endPoints from './endpoints.json';
 
 function App() {
+  const [logado, setLogado] = useState(false)  // ok
+
+  useEffect(() => {
+  }, [])
 
   const apiNome = "https://restcountries.com/v3.1";
   const tokenApi = "sk.eyJ1IjoibWFyY2lvc2xyIiwiYSI6ImNtaXVsamdtODB2dm4zZG9tcTJqanJ0YzQifQ.aCIQ-PZRXgRqmchp7SlbTQ";
@@ -15,32 +20,50 @@ function App() {
 
   const listaCodigos = endPoints.codigos;
 
-  // --- FUNÇÃO 1: BUSCA POR NOME E ADICIONA O CARD (ACESSADA APENAS PELO SUBMIT) ---
   const buscaNome = async (valorInput) => {
     const input = valorInput.trim();
-
 
     try {
 
       const urlRestrita = `${apiNome}/name/${input}?fullText=true`; // Restringe a pesquisa apenas aos endpoints presentes na API
-      const endPoint = await axios.get (urlRestrita);
+      const endPoint = await axios.get(urlRestrita);
       const dadosPais = endPoint.data[0];
 
       // API do mapa precisa da Latitude e Longitude para mostrar a localização no mapa
 
       const lat = dadosPais.latlng[0];
       const lng = dadosPais.latlng[1];
-      const urlMapa = `https://api.mapbox.com/styles/v1/mapbox/streets-v11/static/${lng},${lat},4,0/400x400?access_token=${tokenApi}`;
-      //                                                                                             /\ /\
-      //                                                                                         dimensões do mapa
+
+      const tamPais = dadosPais.area;
+      let zoom;
+
+      // Zoom muda conforme o tamanho do país
+
+      if (tamPais <= 50000) {
+        zoom = '6,0';
+      } else if (tamPais <= 200000) {
+        zoom = '5,0';
+      } else if (tamPais <= 500000) {
+        zoom = '4,0';
+      } else if (tamPais <= 2000000) {
+        zoom = '3,0';
+      } else if (tamPais <= 10000000) {
+        zoom = '2,0';
+      } else {
+        zoom = '1.5,0';
+      }
+
+      const urlMapa = `https://api.mapbox.com/styles/v1/mapbox/outdoors-v11/static/${lng},${lat},${zoom}/400x400?access_token=${tokenApi}`;
+
       const pais = {
         id: dadosPais.cca3,
         nome: dadosPais.name.common,
         img: dadosPais.flags.png,
-        capital: dadosPais.capital ? dadosPais.capital[0] : 'N/A',
+        capital: dadosPais.capital,
         continente: dadosPais.region,
-        regiao: dadosPais.subregion,
-        url: urlMapa
+        area: dadosPais.area,
+        url: urlMapa,
+        lang: Object.values(dadosPais.languages).join(', ') // Transforma em string e coloca a , 
       };
 
       setListaPaises(prevLista => [pais, ...prevLista]);
@@ -56,36 +79,38 @@ function App() {
     buscaNome(valorInput);
   }
 
-  // --- FUNÇÃO 2: PREENCHE O INPUT COM UM NOME ALEATÓRIO ---
   const preencheInputAleatorio = async () => {
-    // 1. Geração Aleatória do Código
+
     const random = Math.floor(Math.random() * listaCodigos.length);
     const codigoEscolhido = listaCodigos[random];
 
-      // 2. Busca os dados para obter o NOME (usando API_ALPHA, mais rápido para códigos)
-      const dados = await axios.get(`${apiNome}/alpha/${codigoEscolhido}`);
-      const nomeCompleto = dados.data[0].name.common;
+    const dados = await axios.get(`${apiNome}/alpha/${codigoEscolhido}`);
+    const nomeCompleto = dados.data[0].name.common;
 
-      // 3. ATUALIZA O ESTADO DO INPUT (CORREÇÃO CHAVE)
-      setValorInput(nomeCompleto);
+    setValorInput(nomeCompleto);
   }
 
-  useEffect(() => {
-  }, []);
+  const deleteCard = (id) => {
+    setListaPaises(prev => prev.filter(p => p.id !== id));
+  };
+
+  if (!logado) {
+    return <Login onLogin={() => setLogado(true)} />;
+  }
 
   return (
     <>
       <header>
         <h1>
-          <img src="public\images\logoFlagpedia.png" alt="" id='logo'/>
+          <img src="public\images\logoFlagpedia.png" alt="" id='logo' />
         </h1>
         <nav>
           <div id='div-btn-2'>
-            <button id='btn-inicio' onClick={() => setPaginaAtual ('inicio')}>Inicio</button>
-            <button id='btn-sobre' onClick={() => setPaginaAtual ('sobre')}>Sobre</button>
+            <button id='btn-inicio' onClick={() => setPaginaAtual('inicio')}>Inicio</button>
+            <button id='btn-sobre' onClick={() => setPaginaAtual('sobre')}>Sobre</button>
           </div>
-            <button id='btn-logout'>LogOut</button>
-        </nav> 
+          <button id='btn-logout'>LogOut</button>
+        </nav>
       </header>
       <main>
         <h2 id='pesquisa-h2'>Pesquise um país ou use o botão '?' para uma sugestão!</h2>
@@ -106,12 +131,15 @@ function App() {
             listaPaises.map((cardData) => (
               <Card
                 key={cardData.id}
+                id={cardData.id}
                 nome={cardData.nome}
                 img={cardData.img}
                 capital={cardData.capital}
                 continente={cardData.continente}
-                regiao={cardData.regiao}
+                area={cardData.area}
                 mapaUrl={cardData.url}
+                lang={cardData.lang}
+                onDelete={deleteCard}
               />
             ))
           ) : (
@@ -124,3 +152,6 @@ function App() {
 }
 
 export default App;
+
+
+// Teste para ver se deu bom

@@ -1,14 +1,18 @@
 import React from 'react'
 
-function Card({key, nome, img, capital, continente, regiao, mapaUrl}) {
+function Card({id, nome, img, capital, continente, area, mapaUrl, lang, onDelete}) {
+
+  const areaConv = area.toLocaleString('pt-BR'); // Colocar o . no valor (123456 para 123.456)
+
   return (
     <div id='card-completo'>
-        <img src={img} id='flag-img' alt="Bandeira do país"/>
+      <div id='div-infos'>
+        <img src={img} id='flag-img' alt="Bandeira do país" />
         <h2 id='nome-pais'>{nome}</h2>
         <div id='div1'>
           <span>Capital:</span>
           <span><strong>{capital}</strong></span>
-        </div>
+        </div>  
         <hr />
         <div id='div1'>
           <span>Continente:</span>
@@ -16,21 +20,37 @@ function Card({key, nome, img, capital, continente, regiao, mapaUrl}) {
         </div>
         <hr />
         <div id='div1'>
-          <span>Região:</span>
-          <span><strong>{regiao}</strong></span>
+          <span>Área:</span>
+          <span><strong>{areaConv + " km²"}</strong></span>
         </div>
         <hr />
-        <div id='div-mapa'>
-          <div>
-            <img src={mapaUrl} alt="Localização do pais" />
-          </div>
+        <div id='div1'>
+          <span>Linguas:</span>
+          <span><strong>{lang}</strong></span>
         </div>
-
-
         <div id='btn-card'>
-          <button id='edit-btn'><img src="public\images\edit.png" alt="" id='icon-edit-png'/>Editar</button>
-          <button id='del-btn'><img src="public\images\icondel.png" alt="" id='icon-del-png'/>Deletar</button>
+          <button id='edit-btn'>
+            <img src="public\images\edit.png" alt="" id='icon-edit-png' />Editar
+          </button>
+          <button 
+            id='del-btn' 
+            onClick={() => {
+              const confirma = window.confirm("Tem certeza que deseja excluir o card?");
+              if (confirma) {
+                onDelete(id);
+              }
+            }}>
+            <img src="public\images\icondel.png" alt="" id='icon-del-png' />Deletar
+          </button>
         </div>
+      </div>
+
+      <div id='div-mapa'>
+        <div>
+          <img src={mapaUrl} alt="Localização do pais" id='img-mapa'/>
+        </div>
+      </div>
+
     </div>
   )
 }
