@@ -64,9 +64,9 @@ function App() {
 
       setListaPaises(prevLista => [pais, ...prevLista]);
       setValorInput('');
-      // quando adiciona novo país, navega opcionalmente para inicio (mantemos na lista)
       setPaginaAtual('inicio');
       setPaisSelecionado(null);
+      
     } catch (error) {
       alert(`País '${input}' não encontrado!`);
     }
