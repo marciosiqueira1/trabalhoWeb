@@ -31,14 +31,14 @@ Feito com ❤️ por Márcio.
 
 ---
 
-### 🔹 Tela Inicial
-![Home](./public/readme/home.png)
+### Login
+![Login](./public/print1.png)
 
-### 🔹 Busca de Países
-![Busca](./public/readme/busca.png)
+### Tela Inicial
+![Inicio](./public/print2.png)
 
-### 🔹 Detalhes de um País
-![Detalhes](./public/readme/detalhes.png)
+### Card Completo
+![Card](./public/print3.png)
 
 ---
 
