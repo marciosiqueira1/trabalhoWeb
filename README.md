@@ -32,13 +32,13 @@ Feito com ❤️ por Márcio.
 ---
 
 ### Login
-![Login](./public/print1.png)
+![Login](./public/images/print1.png)
 
 ### Tela Inicial
-![Inicio](./public/print2.png)
+![Inicio](./public/images/print2.png)
 
 ### Card Completo
-![Card](./public/print3.png)
+![Card](./public/images/print3.png)
 
 ---
 
