@@ -1,57 +1,51 @@
-// import { useState } from "react";
-// import axios from "axios";
-// import './styles/Login.css'
+import { useState } from "react";
+import "./styles/login.css";
 
-// function Login({ onLogin }) {
+function Login({ onLogin }) {
+  const [email, setEmail] = useState("");
+  const [senha, setSenha] = useState("");
 
-//   const [email, setEmail] = useState("");
-//   const [senha, setSenha] = useState("");
+  const fazerLogin = (e) => {
+    e.preventDefault();
 
-//   const handleSubmit = async (e) => {
-//     e.preventDefault();
+    if (!email || !senha) {
+      alert("Preencha todos os campos");
+      return;
+    }
 
-//     try {
-//       const resp = await axios.post("http://localhost:3001/login", {
-//         email,
-//         senha
-//       });
+    onLogin();
+  };
 
-//       // token retornado
-//       const token = resp.data.token;
+  return (
+    <div id="login-container">
+      <form id="form-login" onSubmit={fazerLogin}>
 
-//       // salva token no navegador
-//       localStorage.setItem("token", token);
+        <h2 id="h2-login">Login</h2>
 
-//       alert("Login realizado com sucesso!");
+        <input
+          className="input-login"
+          type="email"
+          placeholder="Digite seu e-mail"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          id="input-login"
+        />
 
-//       onLogin(); // avisa o App
+        <input
+          className="input-login"
+          type="password"
+          placeholder="Digite sua senha"
+          value={senha}
+          onChange={(e) => setSenha(e.target.value)}
+          id="input-login"
+        />
 
-//     } catch (erro) {
-//       alert(erro.response?.data?.erro || "Erro ao fazer login");
-//     }
-//   }
+        <button id="btn-login" type="submit">
+          Entrar
+        </button>
+      </form>
+    </div>
+  );
+}
 
-//   return (
-//     <form onSubmit={handleSubmit} id="form-login">
-//       <h2 id="h2-login">Login</h2>
-
-//       <input
-//         id="input-login"
-//         type="email"
-//         placeholder="Email"
-//         onChange={(e) => setEmail(e.target.value)}
-//       />
-
-//       <input
-//         id="input-login"
-//         type="password"
-//         placeholder="Senha"
-//         onChange={(e) => setSenha(e.target.value)}
-//       />
-
-//       <button>Entrar</button>
-//     </form>
-//   );
-// }
-    
-// export default Login;
+export default Login;

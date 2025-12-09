@@ -194,3 +194,49 @@ hr{
 #icon-del-png{
   width: 22px;
  }
+
+ .input-editar {
+  padding: 6px;
+  border: 1px solid black;
+  border-radius: 6px;
+  width: 200px;
+}
+
+#salvar-btn, #cancel-btn{
+  width: 120px;
+  justify-content: center;
+  margin: 20px 0px 10px 10px;
+}
+#salvar-btn{
+  background-color: green;
+}
+
+#cancel-btn{
+  background-color: red ;
+}
+
+#div-sobre{
+  display: flex;
+  justify-content: center;
+  margin-top: 20px;
+}
+
+#card-sobre{
+  display: flex;
+  justify-content: center;
+  background-color: white;
+  margin-top: 20px;
+  border-radius: 10px;
+  padding: 30px;
+  width: 600px;
+}
+#texto-sobre{
+  margin-right: 20px;
+  margin-top: 15px;
+}
+
+#foto-eu{
+  height: 300px;
+  margin-top: 20px;
+  margin-right: 10px;
+}

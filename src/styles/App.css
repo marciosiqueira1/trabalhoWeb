@@ -7,11 +7,11 @@ body {
 #root {
   font-family: 'Montserrat', sans-serif;
   color: rgb(64, 64, 64);
-  background-color: #002509;
   width: 100%;
   min-height: 735px;
   margin: 0 auto;
   text-align: center;
-  background-image: url('public/images/Background.png');
-  background-size: contain;
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  border-radius: 0;
 }
